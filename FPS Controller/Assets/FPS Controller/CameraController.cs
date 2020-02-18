@@ -3,15 +3,15 @@
 public class CameraController : MonoBehaviour
 {
 
-    public float minX = -60f;
-    public float maxX = 60f;
-    public float minY = -360;
-    public float maxY = 360;
-    public float sensitivityX = 15f;
-    public float sensitivityY = 15f;
+ 
+    [SerializeField] float sensitivityX = 15f;
+    [SerializeField] float sensitivityY = 15f;
+    
     public Camera cam;
     public GameObject player;
 
+    private float minX = -60f;
+    private float maxX = 60f;
     private float rotationY = 0f;
     private float rotationX = 0f;
     private Vector3 offset;
@@ -33,8 +33,8 @@ public class CameraController : MonoBehaviour
 
         rotationX = Mathf.Clamp(rotationX, minX, maxX);
 
-        transform.localEulerAngles = new Vector3(0, rotationY, 0);
-        cam.transform.localEulerAngles = new Vector3(-rotationX, rotationY, 0);
+        player.transform.localEulerAngles = new Vector3(0, rotationY, 0);
+        cam.transform.localEulerAngles = new Vector3(-rotationX, rotationY, 0); 
 
     }
 
