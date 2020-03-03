@@ -2,10 +2,11 @@
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float moveSpeed;
+    [SerializeField] float walkSpeed;
     [SerializeField] float Runspeed;
     [SerializeField] float jumpForce;
 
+    private float moveSpeed;
     private bool isGrounded;
     private Rigidbody rb;
     private Vector3 Movement;
@@ -21,43 +22,40 @@ public class PlayerController : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
 
+
         Movement = (x * transform.right + y * transform.forward).normalized;
-        //normalized makes sure that when moving diagonally you will have the same speed
+        // "normalized" makes sure that when moving diagonally you will have the same speed
     }
     //fixedUpdate() -- for physics steps
     private void FixedUpdate()
     {
-        Move();
-        GroundCheck();
+        Move(Movement);
+    }
+
+    private void Move(Vector3 input) // gets the input of "Movement" with the normalized calculations
+    {
+        rb.MovePosition(transform.position + (input * moveSpeed * Time.deltaTime));
         Sprint();
+        GroundCheck();
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded == true)
         {
             Jump();
         }
     }
-
-    private void Move()
-    {
-        Vector3 yFix = new Vector3(0, rb.velocity.y, 0); //this fixes the velocity of y to prevent if from falling slowly
-        rb.velocity = Movement * moveSpeed * Time.deltaTime;
-        rb.velocity += yFix;
-    }
-    private void Jump()
-    {
-        rb.velocity += new Vector3(0, jumpForce * Time.deltaTime, 0);
-    }
     private void Sprint()
     {
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            Vector3 fix = new Vector3(0, rb.velocity.y, 0);
-            rb.velocity = Movement * Runspeed * Time.deltaTime;
-            rb.velocity += fix;
+            moveSpeed = Runspeed;
         }
         else
         {
-            Move();
+            moveSpeed = walkSpeed;
         }
+    }
+    private void Jump()
+    {
+        rb.AddForce(Vector3.up* jumpForce, ForceMode.Impulse);
     }
 
     private void GroundCheck()
